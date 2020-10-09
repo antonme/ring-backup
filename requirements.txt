@@ -1,0 +1,2 @@
+oauthlib~=3.1.0
+ring_doorbell
