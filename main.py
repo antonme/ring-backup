@@ -2,7 +2,7 @@ import getpass
 import json
 import os
 import time
-from datetime import timezone
+from datetime import timezone, datetime
 from pathlib import Path
 
 from oauthlib.oauth2 import MissingTokenError
@@ -32,6 +32,7 @@ else:
     except MissingTokenError:
         auth.fetch_token(username, password, otp_callback())
 
+log_time = datetime.now().strftime('%Y.%m.%d %H:%M:%S')
 ring = Ring(auth)
 ring.update_data()
 
@@ -62,7 +63,6 @@ for doorbell in devices['doorbots']:
 
             bell_time = bell_time_orig.replace(tzinfo=timezone.utc).astimezone(tz=None)
             bell_time_str = bell_time.strftime('%Y-%m-%d %H.%M.%S')
-            bell_time_log = bell_time.strftime('%Y.%m.%d %H:%M:%S')
 
             bell_time_int = time.mktime(bell_time.timetuple())
 
@@ -88,11 +88,11 @@ for doorbell in devices['doorbots']:
                 cur_name = file_dict[bell_time_int]
                 if cur_name != filename:
                     enough = False
-                    print(f'[{bell_time_log}] Wrong name: [{filename}]  Renaming.')
+                    print(f'[{log_time}] Wrong name: [{filename}]  Renaming.')
                     os.rename(cur_name, filename)
             elif not Path(filename).is_file():
                 enough = False
-                print(f'[{bell_time_log}]  New video: [{filename}]  Downloading...', end='')
+                print(f'[{log_time}]  New video: [{filename}]  Downloading...', end='')
                 doorbell.recording_download(event_id, filename)
                 print("done.")
 
@@ -102,7 +102,7 @@ for doorbell in devices['doorbots']:
             time.sleep(0.05)
 
         if len(events) == 0 or enough:
-            print(f"[{bell_time_log}]  Seems like all videos are already loaded. Nothing to do here.")
+            print(f"[{log_time}]  Seems like all videos are already loaded. Nothing to do here.")
             exit(0)
 
         time.sleep(0.2)
