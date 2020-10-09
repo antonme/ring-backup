@@ -52,10 +52,8 @@ for doorbell in devices['doorbots']:
     # listing the last 15 events of any kind
     while True:
         if not event_id:
-            print("Listing first page...")
             events = doorbell.history(limit=30)
         else:
-            print("Listing next page...")
             events = doorbell.history(limit=30, older_than=event_id)
 
         for event in events:
@@ -64,6 +62,8 @@ for doorbell in devices['doorbots']:
 
             bell_time = bell_time_orig.replace(tzinfo=timezone.utc).astimezone(tz=None)
             bell_time_str = bell_time.strftime('%Y-%m-%d %H.%M.%S')
+            bell_time_log = bell_time.strftime('%Y.%m.%d %H:%M:%S')
+
             bell_time_int = time.mktime(bell_time.timetuple())
 
             subfolder = "/" + bell_time.strftime('%B %Y') + "/"
@@ -88,11 +88,11 @@ for doorbell in devices['doorbots']:
                 cur_name = file_dict[bell_time_int]
                 if cur_name != filename:
                     enough = False
-                    print(f'Potential name:    [{filename}]  Renaming.')
+                    print(f'[{bell_time_str}] Wrong name: [{filename}]  Renaming.')
                     os.rename(cur_name, filename)
             elif not Path(filename).is_file():
                 enough = False
-                print(f'Potential name:    [{filename}]  Downloading...', end='')
+                print(f'[{bell_time_str}] New video: [{filename}]  Downloading...', end='')
                 doorbell.recording_download(event_id, filename)
                 print("done.")
 
