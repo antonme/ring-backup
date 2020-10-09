@@ -88,11 +88,11 @@ for doorbell in devices['doorbots']:
                 cur_name = file_dict[bell_time_int]
                 if cur_name != filename:
                     enough = False
-                    print(f'[{bell_time_str}] Wrong name: [{filename}]  Renaming.')
+                    print(f'[{bell_time_log}] Wrong name: [{filename}]  Renaming.')
                     os.rename(cur_name, filename)
             elif not Path(filename).is_file():
                 enough = False
-                print(f'[{bell_time_str}] New video: [{filename}]  Downloading...', end='')
+                print(f'[{bell_time_log}]  New video: [{filename}]  Downloading...', end='')
                 doorbell.recording_download(event_id, filename)
                 print("done.")
 
@@ -102,7 +102,7 @@ for doorbell in devices['doorbots']:
             time.sleep(0.05)
 
         if len(events) == 0 or enough:
-            print("Seems like everything is already loaded. Stopping.")
+            print(f"[{bell_time_log}]  Seems like all videos are already loaded. Nothing to do here.")
             exit(0)
 
         time.sleep(0.2)
